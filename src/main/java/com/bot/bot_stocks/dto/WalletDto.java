@@ -11,10 +11,10 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class WalletDto {
 
-    private Long id_stock;
-    private String stock_symbol;
-    private String stock_name;
+    private Long idStock;
+    private String stockSymbol;
+    private String stockName;
     private Long volume;
-    private Timestamp created_on;
-    private Timestamp updated_on;
+    private Timestamp created;
+    private Timestamp updated;
 }

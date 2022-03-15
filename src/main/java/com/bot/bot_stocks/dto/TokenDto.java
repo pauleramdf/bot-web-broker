@@ -1,27 +1,33 @@
 package com.bot.bot_stocks.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
+@NoArgsConstructor
 public class TokenDto {
-    private String token_type;
-    private String access_token;
-    private Long expires_in;
+    @JsonProperty("token_type")
+    private String tokenType;
+    @JsonProperty("access_token")
+    private String accessToken;
+    @JsonProperty("expires_in")
+    private Long expiresIn;
+    @JsonProperty("scope")
     private String scope;
-    private String id_token;
-
-    public TokenDto(){}
+    @JsonProperty("id_token")
+    private String idToken;
 
     @Override
     public String toString() {
         return "TokenDto{" +
-                "token_type='" + token_type + '\'' +
-                ", access_token='" + access_token + '\'' +
-                ", expires_in=" + expires_in +
+                "token_type='" + tokenType + '\'' +
+                ", access_token='" + accessToken + '\'' +
+                ", expires_in=" + expiresIn +
                 ", scope='" + scope + '\'' +
-                ", id_token='" + id_token + '\'' +
+                ", id_token='" + idToken + '\'' +
                 '}';
     }
 }

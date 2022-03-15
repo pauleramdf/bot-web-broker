@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Setter
 @Table(name="users")
 public class User implements Serializable {
-    private static final long serialversionUID = 1L;
+    private static final long SERIALVERSIONUID = 1L;
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -27,17 +27,17 @@ public class User implements Serializable {
     private String password;
 
     @Column(name = "dollar_balance", nullable = false)
-    private Double dollar_balance;
+    private Double dollarBalance;
 
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
 
     @CreationTimestamp
     @Column(name = "created_on")
-    private Timestamp created_on;
+    private Timestamp created;
     @UpdateTimestamp
     @Column(name = "updated_on")
-    private Timestamp updated_on;
+    private Timestamp updated;
 
     @PrePersist
     private void onCreate(){
@@ -47,9 +47,9 @@ public class User implements Serializable {
     public User(){
     }
 
-    public User(String username, String password, Double dollar_balance) {
+    public User(String username, String password, Double dollarBalance) {
         this.username = username;
         this.password = password;
-        this.dollar_balance = dollar_balance;
+        this.dollarBalance = dollarBalance;
     }
 }

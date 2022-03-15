@@ -20,8 +20,8 @@ public class Config {
 
     @Bean
     public WebClient webClientStock(WebClient.Builder builder){
-//        .baseUrl("http://apistocks:8083") to docker;
-//        .baseUrl("http://localhost:8083") to localhost
+        //Caso utilizando o docker a url deve ser "http://apistocks:8083"
+        //Caso contrario deve ser "http://localhost:8083"
         return  builder
                 .baseUrl("http://localhost:8083")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -30,8 +30,8 @@ public class Config {
 
     @Bean
     public WebClient webClientUser(WebClient.Builder builder){
-//        .baseUrl("http://apiusers:8082") to docker;
-//        .baseUrl("http://localhost:8082") to localhost
+        //Caso utilizando o docker a url deve ser "http://apiusers:8082"
+        //Caso contrario deve ser "http://localhost:8082"
         return  builder
                 .baseUrl("http://localhost:8082")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
