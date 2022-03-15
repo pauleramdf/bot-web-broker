@@ -54,7 +54,7 @@ public class Bot {
         while(ordensFeitas < ordensFazer){
             nextUserId = gerador.nextInt(users.size());
             nextOrderType = gerador.nextInt(2);
-            nextPriceOrder = gerador.nextDouble(100) +1;
+            nextPriceOrder = Math.round((gerador.nextDouble(100) +1)*100.00)/100.00;
             nextVolumeOrder = gerador.nextLong(10)+1;
 
             if(nextOrderType == 0) {
