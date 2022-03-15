@@ -17,9 +17,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
-import java.sql.Date;
-import java.sql.Time;
-import java.time.Instant;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -35,13 +32,15 @@ public class Bot {
     @Autowired
     private UserRepository repository;
 
+    private String authType = "Bearer ";
+
     @PostConstruct
     public void construcao(){
 
         List<User> users = repository.findAll();
         List <String> tokens = this.getTokenUsers(users);
         List <StockDto> stocks = this.getStocks(tokens.get(0));
-        List <WalletDto> validStocks = new ArrayList<>();
+        List <WalletDto> validStocks;
         OrderDto nextOrder = new OrderDto();
         int ordensFeitas = 0;
         int nextUserId = 0;
@@ -49,6 +48,7 @@ public class Bot {
         int nextStock = 0;
         long nextVolumeOrder = 0;
         double nextPriceOrder = 0;
+
 
 
         while(ordensFeitas < ordensFazer){
@@ -59,18 +59,18 @@ public class Bot {
 
             if(nextOrderType == 0) {
                 nextStock = gerador.nextInt(stocks.size());
-                nextOrder.setId_stock(stocks.get(nextStock).getId());
-                nextOrder.setStock_name(stocks.get(nextStock).getStock_name());
-                nextOrder.setStock_symbol(stocks.get(nextStock).getStock_symbol());
+                nextOrder.setIdStock(stocks.get(nextStock).getId());
+                nextOrder.setStockName(stocks.get(nextStock).getStockName());
+                nextOrder.setStockSymbol(stocks.get(nextStock).getStockSymbol());
             }
             else{
                 validStocks = getValidStocks(tokens.get(nextUserId));
                 nextStock = gerador.nextInt(validStocks.size());
 
                 if(validStocks.get(nextStock).getVolume()>0){
-                    nextOrder.setId_stock(validStocks.get(nextStock).getId_stock());
-                    nextOrder.setStock_name(validStocks.get(nextStock).getStock_name());
-                    nextOrder.setStock_symbol(validStocks.get(nextStock).getStock_symbol());
+                    nextOrder.setIdStock(validStocks.get(nextStock).getIdStock());
+                    nextOrder.setStockName(validStocks.get(nextStock).getStockName());
+                    nextOrder.setStockSymbol(validStocks.get(nextStock).getStockSymbol());
 
                     nextVolumeOrder = gerador.nextLong(validStocks.get(nextStock).getVolume())+1;
                 }
@@ -81,13 +81,12 @@ public class Bot {
 
             nextOrder.setPrice(nextPriceOrder);
             nextOrder.setVolume(nextVolumeOrder);
-            nextOrder.setRemaining_volume(nextVolumeOrder);
-            nextOrder.setTotal_price(nextPriceOrder*nextVolumeOrder);
+            nextOrder.setRemainingVolume(nextVolumeOrder);
+            nextOrder.setTotalPrice(nextPriceOrder*nextVolumeOrder);
             nextOrder.setType(nextOrderType);
             
             this.criaOrdem(nextOrder, tokens.get(nextUserId));
 
-//            System.out.println("bot do user" + nextUserId + " "+ ordensFeitas + " " + Date.from(Instant.now()));
             ordensFeitas += 1;
         }
     }
@@ -96,7 +95,7 @@ public class Bot {
         return Arrays.stream(
                         webClientUser.get()
                                 .uri("/stockbalances")
-                                .header(HttpHeaders.AUTHORIZATION, "Bearer "+ token)
+                                .header(HttpHeaders.AUTHORIZATION, authType+ token)
                                 .retrieve()
                                 .bodyToMono(WalletDto[].class)
                                 .block())
@@ -104,24 +103,22 @@ public class Bot {
     }
 
     private void criaOrdem(OrderDto nextOrder, String token) {
-        String ordem = webClientUser
+        webClientUser
                 .post()
                 .uri("/order")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer "+ token)
+                .header(HttpHeaders.AUTHORIZATION, authType + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just(nextOrder), OrderDto.class)
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
-
-        System.out.println(ordem);
     }
 
     private List<StockDto> getStocks(String token){
         return Arrays.stream(
                         webClientStock.get()
                 .uri("/stocks")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer "+ token)
+                .header(HttpHeaders.AUTHORIZATION, authType + token)
                 .retrieve()
                 .bodyToMono(StockDto[].class)
                 .block())
@@ -147,15 +144,9 @@ public class Bot {
                     .bodyToMono(String.class)
                     .block();
 
-
-//            System.out.println(gson.fromJson(token , TokenDto.class).toString());
-
-            tokens.add( gson.fromJson(token , TokenDto.class).getAccess_token());
+            tokens.add( gson.fromJson(token , TokenDto.class).getAccessToken());
         }
 
-        for (int i = 0; i < users.size() ; i++) {
-            System.out.println(tokens.get(i));
-        }
         return tokens;
     }
 }
