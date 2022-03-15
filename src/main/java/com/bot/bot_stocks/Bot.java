@@ -4,7 +4,6 @@ import com.bot.bot_stocks.dto.OrderDto;
 import com.bot.bot_stocks.dto.StockDto;
 import com.bot.bot_stocks.dto.TokenDto;
 import com.bot.bot_stocks.dto.WalletDto;
-import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -127,7 +126,6 @@ public class Bot {
 
     private List<String> getTokenUsers(List<User> users) {
         List <String> tokens = new ArrayList<>();
-        Gson gson = new Gson();
 
         for (User user : users) {
 
@@ -137,14 +135,14 @@ public class Bot {
             formData.add("scope", "openid");
             formData.add("grant_type", "password");
 
-            String token = webClientOkta.post()
+            TokenDto token = webClientOkta.post()
                     .uri("/")
                     .body(BodyInserters.fromFormData(formData))
                     .retrieve()
-                    .bodyToMono(String.class)
+                    .bodyToMono(TokenDto.class)
                     .block();
-
-            tokens.add( gson.fromJson(token , TokenDto.class).getAccessToken());
+            if(token != null)
+                tokens.add(token.getAccessToken());
         }
 
         return tokens;

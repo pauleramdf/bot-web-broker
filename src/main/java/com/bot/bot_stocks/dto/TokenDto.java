@@ -1,15 +1,18 @@
 package com.bot.bot_stocks.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Setter
 @Getter
+@ToString
 @NoArgsConstructor
 public class TokenDto {
-    @JsonProperty("token_type")
+    @JsonAlias({"token_type"})
     private String tokenType;
     @JsonProperty("access_token")
     private String accessToken;
